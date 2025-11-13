@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo King - Firebase Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .step h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 10px 10px 0;
+        }
+        .button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .button.secondary {
+            background: #48bb78;
+        }
+        .button.secondary:hover {
+            background: #38a169;
+        }
+        .success {
+            background: #c6f6d5;
+            border-left: 4px solid #48bb78;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #22543d;
+        }
+        .warning {
+            background: #fef5e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #7d6608;
+        }
+        .checkbox-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        .progress {
+            background: #e2e8f0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Ludo King Board System</h1>
+        <p class="subtitle">Firebase Setup for Existing Project</p>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> This setup assumes you already have a Firebase project configured.
+            Make sure your Firebase credentials are in <code>services/firebaseConfig.js</code>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">1</span>Verify Firebase Configuration</h2>
+            <p>Check that your Firebase project is properly configured:</p>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check1" onchange="updateProgress()">
+                <label for="check1">Firebase credentials in services/firebaseConfig.js</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check2" onchange="updateProgress()">
+                <label for="check2">Authentication enabled in Firebase Console</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check3" onchange="updateProgress()">
+                <label for="check3">Firestore Database enabled</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check4" onchange="updateProgress()">
+                <label for="check4">Storage enabled</label>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">2</span>Create Firestore Documents</h2>
+            <p>Go to Firebase Console → Firestore Database and create these documents:</p>
+            
+            <h3 style="margin-top: 20px; color: #667eea;">Collection: admin</h3>
+            
+            <p style="margin-top: 15px;"><strong>Document: gameControls</strong></p>
+            <div class="code-block">{
+  "diceRollSpeed": 1000,
+  "tokenMoveSpeed": 500,
+  "autoSkipTurn": true,
+  "turnTimeLimit": 30,
+  "enableSafeSpots": true,
+  "enableCapture": true,
+  "winBonus": 1.0,
+  "maxPlayers": 4,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "updatedBy": "system"
+}</div>
+            <button class="button secondary" onclick="copyToClipboard('gameControls')">📋 Copy JSON</button>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check5" onchange="updateProgress()">
+                <label for="check5">Created admin/gameControls document</label>
+            </div>
+
+            <p style="margin-top: 15px;"><strong>Document: paymentQR</strong></p>
+            <div class="code-block">{
+  "upiId": "your-upi-id@upi",
+  "qrImageUrl": null,
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+}</div>
+            <button class="button secondary" onclick="copyToClipboard('paymentQR')">📋 Copy JSON</button>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check6" onchange="updateProgress()">
+                <label for="check6">Created admin/paymentQR document</label>
+            </div>
+
+            <p style="margin-top: 15px;"><strong>Document: appConfig</strong></p>
+            <div class="code-block">{
+  "ai_difficulty": "normal",
+  "entry_fee_coin": 20,
+  "daily_bonus_coin": 100,
+  "bot_fill_ratio": 0,
+  "game_difficulty": "normal"
+}</div>
+            <button class="button secondary" onclick="copyToClipboard('appConfig')">📋 Copy JSON</button>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check7" onchange="updateProgress()">
+                <label for="check7">Created admin/appConfig document</label>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">3</span>Create Admin User</h2>
+            <p>Set up your admin user:</p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Go to Firebase Console → Authentication</li>
+                <li>Find your admin user or create one</li>
+                <li>Copy the User UID</li>
+                <li>Go to Firestore Database</li>
+                <li>Create collection: "admins"</li>
+                <li>Create document with ID = User UID</li>
+                <li>Add these fields:</li>
+            </ol>
+            <div class="code-block">{
+  "role": "admin",
+  "email": "admin@yourdomain.com",
+  "createdAt": "2024-01-01T00:00:00.000Z"
+}</div>
+            <button class="button secondary" onclick="copyToClipboard('admin')">📋 Copy JSON</button>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check8" onchange="updateProgress()">
+                <label for="check8">Created admins collection with admin user</label>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">4</span>Deploy Security Rules</h2>
+            <p>Update Firestore security rules:</p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Go to Firebase Console → Firestore Database → Rules</li>
+                <li>Copy content from <code>firestore.rules</code> file in your project</li>
+                <li>Paste into Firebase Console</li>
+                <li>Click "Publish"</li>
+            </ol>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check9" onchange="updateProgress()">
+                <label for="check9">Deployed Firestore security rules</label>
+            </div>
+        </div>
+
+        <div class="step">
+            <h2><span class="step-number">5</span>Test the Application</h2>
+            <p>Verify everything works:</p>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check10" onchange="updateProgress()">
+                <label for="check10">Run: npm start (or expo start)</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check11" onchange="updateProgress()">
+                <label for="check11">Sign in with admin account</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check12" onchange="updateProgress()">
+                <label for="check12">Navigate to Admin Dashboard</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check13" onchange="updateProgress()">
+                <label for="check13">Click "Game Controls" button</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check14" onchange="updateProgress()">
+                <label for="check14">Modify a setting and save</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="check15" onchange="updateProgress()">
+                <label for="check15">Start a game and verify board renders</label>
+            </div>
+        </div>
+
+        <div id="successMessage" style="display: none;">
+            <div class="success">
+                <h3 style="margin-bottom: 10px;">🎉 Setup Complete!</h3>
+                <p>Your Ludo King board system with admin panel is ready to use!</p>
+                <p style="margin-top: 10px;">Next steps:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Test all admin panel features</li>
+                    <li>Test game with multiple players</li>
+                    <li>Verify payment system works</li>
+                    <li>Monitor Firebase usage</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <button class="button" onclick="window.open('https://console.firebase.google.com', '_blank')">
+                🔥 Open Firebase Console
+            </button>
+            <button class="button secondary" onclick="resetProgress()">
+                🔄 Reset Checklist
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const jsonData = {
+            gameControls: {
+                diceRollSpeed: 1000,
+                tokenMoveSpeed: 500,
+                autoSkipTurn: true,
+                turnTimeLimit: 30,
+                enableSafeSpots: true,
+                enableCapture: true,
+                winBonus: 1.0,
+                maxPlayers: 4,
+                updatedAt: new Date().toISOString(),
+                updatedBy: "system"
+            },
+            paymentQR: {
+                upiId: "your-upi-id@upi",
+                qrImageUrl: null,
+                updatedAt: new Date().toISOString()
+            },
+            appConfig: {
+                ai_difficulty: "normal",
+                entry_fee_coin: 20,
+                daily_bonus_coin: 100,
+                bot_fill_ratio: 0,
+                game_difficulty: "normal"
+            },
+            admin: {
+                role: "admin",
+                email: "admin@yourdomain.com",
+                createdAt: new Date().toISOString()
+            }
+        };
+
+        function copyToClipboard(type) {
+            const text = JSON.stringify(jsonData[type], null, 2);
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Copied to clipboard! Paste this in Firebase Console.');
+            }).catch(err => {
+                alert('❌ Failed to copy. Please copy manually.');
+            });
+        }
+
+        function updateProgress() {
+            const total = 15;
+            let checked = 0;
+            for (let i = 1; i <= total; i++) {
+                if (document.getElementById('check' + i).checked) {
+                    checked++;
+                }
+            }
+            const percentage = Math.round((checked / total) * 100);
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+
+            if (percentage === 100) {
+                document.getElementById('successMessage').style.display = 'block';
+            } else {
+                document.getElementById('successMessage').style.display = 'none';
+            }
+
+            // Save progress to localStorage
+            localStorage.setItem('setupProgress', JSON.stringify({
+                checks: Array.from({length: total}, (_, i) => 
+                    document.getElementById('check' + (i + 1)).checked
+                )
+            }));
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset the checklist?')) {
+                for (let i = 1; i <= 15; i++) {
+                    document.getElementById('check' + i).checked = false;
+                }
+                updateProgress();
+                localStorage.removeItem('setupProgress');
+            }
+        }
+
+        // Load saved progress
+        window.onload = function() {
+            const saved = localStorage.getItem('setupProgress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                data.checks.forEach((checked, i) => {
+                    document.getElementById('check' + (i + 1)).checked = checked;
+                });
+                updateProgress();
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Game Rooms - for lobby and matchmaking
+    match /gameRooms/{roomId} {
+      // Anyone authenticated can read rooms
+      allow read: if request.auth != null;
+      
+      // Anyone authenticated can create a room
+      allow create: if request.auth != null &&
+                      request.resource.data.hostId == request.auth.uid;
+      
+      // Only host can update room settings
+      // Players can join by updating players array
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.hostId ||
+        request.auth.uid in request.resource.data.players[].id
+      );
+      
+      // Only host can delete room
+      allow delete: if request.auth != null &&
+                      request.auth.uid == resource.data.hostId;
+    }
+    
+    // Active Games - for gameplay
+    match /ludoGames/{gameId} {
+      // Players in the game can read
+      allow read: if request.auth != null &&
+                    request.auth.uid in resource.data.players[].id;
+      
+      // System can create (via startGame function)
+      allow create: if request.auth != null;
+      
+      // Only players in the game can update
+      // Validate it's their turn for moves
+      allow update: if request.auth != null &&
+                      request.auth.uid in resource.data.players[].id &&
+                      (
+                        // Allow dice roll if it's player's turn
+                        (request.resource.data.players[request.resource.data.currentPlayerIndex].id == request.auth.uid) ||
+                        // Allow game end updates
+                        request.resource.data.gameStatus == 'finished'
+                      );
+      
+      // No one can delete active games (for record keeping)
+      allow delete: if false;
+    }
+    
+    // User profiles and stats
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Game history (optional)
+    match /gameHistory/{historyId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+  }
+}

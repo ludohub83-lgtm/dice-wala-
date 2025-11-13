@@ -1,0 +1,466 @@
+/* Global web-only styles for Ludo Hub - Ludo King inspired theme */
+:root {
+  --ludo-blue: #2563eb;
+  --ludo-green: #22c55e;
+  --ludo-red: #ef4444;
+  --ludo-yellow: #fbbf24;
+  --ludo-purple: #a855f7;
+  --brand-primary: #2563eb;
+  --brand-secondary: #22c55e;
+}
+
+/* Apply Ludo King theme to React Native Paper components on web */
+[data-theme] {
+  --md-sys-color-primary: var(--ludo-blue);
+  --md-sys-color-secondary: var(--ludo-green);
+  --md-sys-color-tertiary: var(--ludo-red);
+  --md-sys-color-error: var(--ludo-red);
+  --md-sys-color-warning: var(--ludo-yellow);
+}
+
+/* Global button styles - Ludo King theme */
+button[class*="Button"],
+button[class*="button"] {
+  transition: all 0.2s ease;
+}
+
+/* Card enhancements */
+[class*="Card"],
+[class*="card"] {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+/* Input field enhancements */
+input[class*="Input"],
+input[class*="input"],
+textarea[class*="Input"],
+textarea[class*="input"] {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+input[class*="Input"]:focus,
+input[class*="input"]:focus,
+textarea[class*="Input"]:focus,
+textarea[class*="input"]:focus {
+  border-color: var(--ludo-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+/* Light/Dark backgrounds */
+@media (prefers-color-scheme: light) {
+  body { background: #f8fafc; color: #0f172a; }
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #0b1220; color: #e5e7eb; }
+}
+
+/* Font smoothing */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection color */
+::selection { background: rgba(37,99,235,0.3); }
+
+/* Scrollbar */
+* { scrollbar-width: thin; scrollbar-color: var(--ludo-blue) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background-color: rgba(37,99,235,0.7); border-radius: 8px; }
+
+/* Buttons hover (web) */
+button { cursor: pointer; }
+
+/* Animated gradient background for flashy pages (e.g., Login) - Ludo King colors */
+.crazy-bg {
+  position: relative;
+  min-height: 100%;
+  background: linear-gradient(120deg, #2563eb, #22c55e, #fbbf24, #ef4444, #a855f7);
+  background-size: 300% 300%;
+  animation: gradientShift 20s ease infinite;
+  overflow: hidden;
+}
+
+.crazy-bg::before,
+.crazy-bg::after {
+  content: "";
+  position: absolute;
+  width: 45vmax;
+  height: 45vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: floaty 18s ease-in-out infinite;
+}
+.crazy-bg::before {
+  top: -10vmax; left: -10vmax; background: #2563eb;
+}
+.crazy-bg::after {
+  bottom: -12vmax; right: -12vmax; background: #22c55e; animation-delay: -6s;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+/* Glow helper for cards - Ludo King style */
+.glow-card {
+  filter: drop-shadow(0 10px 25px rgba(37,99,235,0.4)) drop-shadow(0 0 12px rgba(34,197,94,0.3));
+}
+
+/* Soft glass effect wrapper (optional) */
+.glass {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+
+/* Flip login experience (web) - Ludo King theme */
+.flip-auth {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(34,197,94,0.12), rgba(251,191,36,0.1));
+  position: relative;
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite;
+}
+
+.flip-auth__card {
+  width: 95%;
+  max-width: 880px;
+  height: 540px;
+  position: relative;
+  border-radius: 24px;
+  box-shadow: 0 24px 48px -20px rgba(37,99,235,0.4), 0 0 30px rgba(34,197,94,0.2);
+  transform-style: preserve-3d;
+  perspective: 1500px;
+}
+
+.flip-auth__card > div {
+  position: absolute;
+  width: 50%;
+  min-width: 340px;
+  height: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.flip-auth__content {
+  width: 100%;
+  padding: 2.5rem 3.5rem;
+  text-align: center;
+  color: #0f172a;
+}
+.flip-auth__content h1 {
+  font-size: 3.2rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+.flip-auth__content p {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.flip-auth__login {
+  left: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px 0 0 24px;
+  z-index: 4;
+  border: 2px solid rgba(37,99,235,0.1);
+}
+
+.flip-auth__register {
+  right: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 0 24px 24px 0;
+  z-index: 1;
+  border: 2px solid rgba(34,197,94,0.1);
+}
+
+.flip-auth__page {
+  right: 0;
+  color: #ffffff;
+  transform-origin: left center;
+  transition: animation 0.9s ease;
+  border-radius: 0 24px 24px 0;
+}
+
+.flip-auth__front {
+  background: linear-gradient(-45deg, #2563eb 0%, #22c55e 50%, #fbbf24 100%) no-repeat 0 0/200%;
+  z-index: 3;
+  box-shadow: inset 0 0 40px rgba(37,99,235,0.3);
+}
+
+.flip-auth__back {
+  background: linear-gradient(135deg, #ef4444 0%, #fbbf24 50%, #a855f7 100%) no-repeat 0 0/200%;
+  z-index: 2;
+  box-shadow: inset 0 0 40px rgba(239,68,68,0.3);
+}
+.flip-auth__back .flip-auth__content {
+  transform: rotateY(180deg);
+}
+
+.flip-auth__login form {
+  width: 100%;
+}
+.flip-auth__login input {
+  width: 100%;
+  padding: 14px 16px;
+  margin: 10px 0;
+  border-radius: 14px;
+  border: none;
+  background: #f1f5f9;
+  font-size: 1.5rem;
+  color: #0f172a;
+  outline: none;
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+.flip-auth__login input:focus {
+  background: #e2e8f0;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.4), 0 0 12px rgba(34,197,94,0.2);
+  border: 1px solid rgba(37,99,235,0.5);
+}
+.flip-auth__login button {
+  width: 100%;
+  padding: 13px 16px;
+  margin-top: 8px;
+  border-radius: 40px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #22c55e);
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 20px -8px rgba(37,99,235,0.6), 0 4px 12px -6px rgba(34,197,94,0.5);
+}
+.flip-auth__login button[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.flip-auth__login button:not([disabled]):hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 32px -12px rgba(37,99,235,0.7), 0 8px 16px -8px rgba(34,197,94,0.6);
+}
+
+.flip-auth__alt {
+  background: transparent !important;
+  border: 2px solid rgba(37, 99, 235, 0.7) !important;
+  color: #2563eb !important;
+  margin-top: 16px !important;
+}
+.flip-auth__alt:hover {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border-color: rgba(37, 99, 235, 0.9) !important;
+}
+
+.flip-auth__note {
+  display: block;
+  font-size: 1.2rem;
+  color: rgba(15, 23, 42, 0.6);
+  margin-top: 14px;
+}
+
+.flip-auth__features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1.5rem 0;
+  font-size: 1.3rem;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.flip-auth__link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #2563eb;
+  font-size: 1.3rem;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+.flip-auth__link:hover {
+  color: #1d4ed8;
+}
+
+.flip-auth__copy {
+  display: block;
+  font-size: 1.1rem;
+  color: rgba(15, 23, 42, 0.5);
+  margin-top: 24px;
+}
+
+/* Game-style buttons - Ludo King vibrant style */
+.btn-game {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb 0%, #22c55e 50%, #fbbf24 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  box-shadow: 0 16px 30px -16px rgba(34,197,94,0.7), 0 6px 14px -10px rgba(37,99,235,0.8), 0 0 20px rgba(251,191,36,0.4);
+  transition: transform 0.08s ease, box-shadow 0.2s ease;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.btn-game:hover { 
+  transform: translateY(-2px) scale(1.02); 
+  box-shadow: 0 20px 40px -16px rgba(34,197,94,0.8), 0 8px 18px -10px rgba(37,99,235,0.9), 0 0 25px rgba(251,191,36,0.5);
+}
+.btn-game:active { transform: translateY(0px) scale(0.98); }
+.btn-game__icon { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(37,99,235,0.8);
+  background: rgba(255,255,255,0.05);
+  color: #2563eb;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 12px -6px rgba(37,99,235,0.3);
+}
+.btn-ghost:hover { 
+  transform: translateY(-1px); 
+  background: rgba(37,99,235,0.1); 
+  border-color: rgba(37,99,235,1);
+  box-shadow: 0 6px 16px -8px rgba(37,99,235,0.5);
+}
+
+.pulse {
+  position: relative;
+}
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  background: radial-gradient(closest-side, rgba(34,197,94,0.4), rgba(37,99,235,0.3), transparent);
+  animation: pulseGlow 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes pulseGlow {
+  0% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+  100% { opacity: 0.4; transform: scale(1); }
+}
+
+.flip-auth__card.active .flip-auth__front {
+  animation: flip-front 0.7s ease forwards;
+}
+.flip-auth__card.active .flip-auth__back {
+  animation: flip-back 0.7s ease forwards;
+}
+.flip-auth__card.close .flip-auth__front {
+  animation: flip-close-front 0.7s ease forwards;
+}
+.flip-auth__card.close .flip-auth__back {
+  animation: flip-close-back 0.7s ease forwards;
+}
+
+.flip-auth__card.active .flip-auth__register .flip-auth__content {
+  animation: panel-show 0.7s ease forwards;
+}
+.flip-auth__card.close .flip-auth__register .flip-auth__content {
+  animation: panel-hide 0.7s ease forwards;
+}
+.flip-auth__card.active .flip-auth__login .flip-auth__content {
+  animation: panel-hide 0.6s ease forwards;
+}
+.flip-auth__card.close .flip-auth__login .flip-auth__content {
+  animation: panel-show 0.6s ease forwards;
+}
+
+@keyframes flip-front {
+  from { transform: translateZ(2px) rotateY(0deg); }
+  to { transform: translateZ(1px) rotateY(-180deg); }
+}
+
+@keyframes flip-back {
+  from { transform: translateZ(1px) rotateY(0deg); }
+  to { transform: translateZ(2px) rotateY(-180deg); }
+}
+
+@keyframes flip-close-front {
+  from { transform: translateZ(1px) rotateY(-180deg); }
+  to { transform: translateZ(2px) rotateY(0deg); }
+}
+
+@keyframes flip-close-back {
+  from { transform: translateZ(2px) rotateY(-180deg); }
+  to { transform: translateZ(1px) rotateY(0deg); }
+}
+
+@keyframes panel-show {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 0.98; transform: scale(1); }
+}
+
+@keyframes panel-hide {
+  from { opacity: 0.98; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.92); }
+}
+
+@media (max-width: 960px) {
+  .flip-auth__card {
+    height: auto;
+    transform: none;
+    perspective: none;
+    box-shadow: none;
+  }
+  .flip-auth__card,
+  .flip-auth__card > div {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    border-radius: 20px;
+  }
+  .flip-auth__page,
+  .flip-auth__back .flip-auth__content {
+    transform: none;
+  }
+  .flip-auth__page,
+  .flip-auth__register {
+    display: none;
+  }
+  .flip-auth__login {
+    box-shadow: 0 24px 48px -20px rgba(37,99,235,0.4), 0 0 30px rgba(34,197,94,0.2);
+  }
+}
