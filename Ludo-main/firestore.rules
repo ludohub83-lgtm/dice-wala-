@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is a player in the game
+    function isPlayerInGame(gameData) {
+      return request.auth.uid in gameData.players.map(p => p.id);
+    }
+    
+    // Helper function to check if request is from Cloud Functions service account
+    // In production, you can check: request.auth.token.firebase.sign_in_provider == 'custom'
+    function isServiceAccount() {
+      // For now, we rely on Cloud Functions having admin privileges
+      // In production, add custom claims or service account checks
+      return false; // Clients can never write authoritative fields
+    }
+    
+    // Games collection
+    match /games/{gameId} {
+      // Allow read if authenticated and player in game
+      allow read: if isAuthenticated() && 
+                     isPlayerInGame(resource.data);
+      
+      // Allow create only through Cloud Functions (createGame callable)
+      // Clients should NOT create games directly
+      allow create: if false;
+      
+      // Prevent clients from updating authoritative fields
+      // Only Cloud Functions can update these fields
+      allow update: if false;
+      
+      // The following fields are AUTHORITATIVE and can only be modified by Cloud Functions:
+      // - tokens: token positions
+      // - dice: current dice value
+      // - diceRolledAt: dice roll timestamp
+      // - turnIndex: current player's turn
+      // - availableMoves: computed valid moves
+      // - winnerIds: list of winners
+      // - lastActionId: replay protection
+      // - started: game started flag
+      
+      // Clients must use Cloud Functions (rollDice, playMove) to modify game state
+      
+      // No deletes allowed
+      allow delete: if false;
+    }
+    
+    // Optional: Join requests subcollection (if you want to implement join requests)
+    // This allows clients to request to join without directly modifying game doc
+    match /games/{gameId}/joinRequests/{requestId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                      request.resource.data.playerId == request.auth.uid;
+      allow update, delete: if false;
+    }
+    
+    // User profiles (optional)
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Game history (optional - for storing completed games)
+    match /gameHistory/{historyId} {
+      allow read: if isAuthenticated();
+      allow create: if false; // Only Cloud Functions can create history
+      allow update, delete: if false;
+    }
+  }
+}
+
+/**
+ * PRODUCTION NOTES:
+ * 
+ * 1. Service Account Verification:
+ *    In production, you may want to verify that updates come from Cloud Functions.
+ *    Options:
+ *    - Use custom claims: request.auth.token.admin == true
+ *    - Use service account: check request.auth.token.firebase.sign_in_provider
+ *    - Use a separate admin collection with stricter rules
+ * 
+ * 2. Rate Limiting:
+ *    Consider implementing rate limiting in Cloud Functions to prevent abuse.
+ * 
+ * 3. Data Validation:
+ *    Cloud Functions should validate all data before writing to Firestore.
+ *    These rules provide a security layer, but validation should happen in functions.
+ * 
+ * 4. Indexes:
+ *    Create indexes for common queries:
+ *    - games where started == false (for lobby)
+ *    - games where players array-contains userId (for user's games)
+ * 
+ * 5. Testing:
+ *    Test these rules using Firebase Emulator Suite:
+ *    firebase emulators:start --only firestore
+ *    
+ *    Then run security rules tests to ensure clients cannot bypass restrictions.
+ */

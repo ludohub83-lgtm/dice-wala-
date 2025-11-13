@@ -1,0 +1,131 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Check, XCircle } from 'lucide-react';
+import { fetchPendingWithdraws, approveWithdraw, rejectWithdraw } from '@/lib/api';
+import toast from 'react-hot-toast';
+
+export default function WithdrawRequestsModal({ onClose }) {
+  const [withdraws, setWithdraws] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadWithdraws();
+  }, []);
+
+  const loadWithdraws = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchPendingWithdraws();
+      setWithdraws(data || []);
+    } catch (error) {
+      toast.error('Failed to load withdraw requests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      await approveWithdraw(id);
+      toast.success('Withdrawal approved');
+      loadWithdraws();
+    } catch (error) {
+      toast.error('Failed to approve withdrawal');
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await rejectWithdraw(id);
+      toast.success('Withdrawal rejected');
+      loadWithdraws();
+    } catch (error) {
+      toast.error('Failed to reject withdrawal');
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          onClick={(e) => e.stopPropagation()}
+          className="glass rounded-3xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-white">Withdraw Requests</h2>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/10 rounded-full transition"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-8 text-white">Loading...</div>
+          ) : withdraws.length === 0 ? (
+            <div className="text-center py-8 text-white/70">No pending withdrawals</div>
+          ) : (
+            <div className="space-y-4">
+              {withdraws.map((withdraw) => (
+                <motion.div
+                  key={withdraw.id || withdraw._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass rounded-xl p-4 bg-white/5"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <p className="text-white font-semibold">
+                        User: {withdraw.user_id || withdraw.userId}
+                      </p>
+                      <p className="text-white font-bold text-lg mt-1">
+                        ₹{withdraw.amount || 0}
+                      </p>
+                      {withdraw.payout_info && (
+                        <div className="mt-2 text-white/70 text-sm">
+                          <p>Payout Info: {JSON.stringify(withdraw.payout_info)}</p>
+                        </div>
+                      )}
+                      <p className="text-white/70 text-sm mt-1">
+                        Requested: {new Date(withdraw.created_at || withdraw.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleApprove(withdraw.id || withdraw._id)}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition"
+                    >
+                      <Check className="w-4 h-4 inline mr-2" />
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleReject(withdraw.id || withdraw._id)}
+                      className="flex-1 bg-gradient-to-r from-red-500 to-rose-600 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition"
+                    >
+                      <XCircle className="w-4 h-4 inline mr-2" />
+                      Reject
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
