@@ -19,7 +19,6 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firebase, firebaseConfig, sendOTP, verifyOTP } from '../services/firebaseAuth';
 import AppLogo from '../components/AppLogo';
@@ -38,7 +37,6 @@ export default function LoginScreen({ onLogin }) {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  const recaptchaVerifier = useRef(null);
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -86,7 +84,7 @@ export default function LoginScreen({ onLogin }) {
     setLoading(true);
     try {
       const formatted = phone.startsWith('+91') ? phone : '+91' + phone;
-      const result = await sendOTP(formatted, recaptchaVerifier);
+      const result = await sendOTP(formatted, null);
       setVerificationId(result.verificationId);
       setMode('otp');
       Alert.alert('OTP Sent', 'Check your phone for verification code');
@@ -168,10 +166,6 @@ export default function LoginScreen({ onLogin }) {
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           showsVerticalScrollIndicator={false}
         >
-          <FirebaseRecaptchaVerifierModal
-            ref={recaptchaVerifier}
-            firebaseConfig={firebaseConfig}
-          />
           <Animated.View
             style={[styles.logoContainer, { transform: [{ scale: scaleAnim }] }]}
           >

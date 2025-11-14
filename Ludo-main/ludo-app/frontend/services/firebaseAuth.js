@@ -62,16 +62,9 @@ export const sendOTP = async (phoneNumber, recaptchaVerifierRef = null) => {
       const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
       return { verificationId: confirmationResult.verificationId };
     } else {
-      // For Expo Native (Android/iOS)
-      if (!recaptchaVerifierRef || !recaptchaVerifierRef.current) {
-        throw new Error('Recaptcha verifier not initialized');
-      }
-      const phoneProvider = new firebase.auth.PhoneAuthProvider();
-      const verificationId = await phoneProvider.verifyPhoneNumber(
-        phoneNumber,
-        recaptchaVerifierRef.current
-      );
-      return { verificationId };
+      // For native apps (Android/iOS), Firebase handles recaptcha automatically
+      const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber);
+      return { verificationId: confirmationResult.verificationId };
     }
   } catch (error) {
     console.error('Send OTP error:', error);

@@ -1,12 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
-import { firebase } from './firebaseConfig'; // make sure this imports your initialized firebase
-
-const firebaseConfig = firebase.app().options;
+import { firebase } from '../services/firebaseAuth';
 
 export default function PhoneAuthScreen() {
-  const recaptchaVerifier = useRef(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationId, setVerificationId] = useState(null);
   const [verificationCode, setVerificationCode] = useState('');
@@ -14,12 +10,9 @@ export default function PhoneAuthScreen() {
   // Step 1 — Send OTP
   const sendVerification = async () => {
     try {
-      const phoneProvider = new firebase.auth.PhoneAuthProvider();
-      const verificationId = await phoneProvider.verifyPhoneNumber(
-        phoneNumber,
-        recaptchaVerifier.current
-      );
-      setVerificationId(verificationId);
+      // For native apps, Firebase will handle recaptcha automatically
+      const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber);
+      setVerificationId(confirmationResult.verificationId);
       Alert.alert('OTP Sent!', 'Please check your SMS for the verification code.');
     } catch (error) {
       console.error('Send OTP error:', error);
@@ -52,15 +45,8 @@ export default function PhoneAuthScreen() {
         backgroundColor: '#f9f9f9',
       }}
     >
-      {/* ✅ reCAPTCHA verifier */}
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-        attemptInvisibleVerification={true}
-      />
-
       <Text style={{ fontSize: 26, fontWeight: 'bold', marginBottom: 20 }}>
-        Ludo Hub Login
+        Dice Wala Login
       </Text>
 
       <TextInput
